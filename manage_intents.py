@@ -38,13 +38,12 @@ def main():
         intents = json.load(questions_file)
 
     dialogflow_project_id = 'game-verbs-351817'
-    intent_name = 'Как устроиться к вам на работу'
+    intent_name = list(intents.keys())[1]
+    intent_questions = intents[intent_name]['questions']
+    intent_answer = [intents[intent_name]['answer']]
 
-    first_intent = list(intents.keys())[0]
-    intent_questions = intents[first_intent]['questions']
-    intent_answer = [intents[first_intent]['answer']]
-
-    create_intent(dialogflow_project_id, intent_name, intent_questions, intent_answer)
+    intent = create_intent(dialogflow_project_id, intent_name, intent_questions, intent_answer)
+    print(intent)
 
 
 if __name__ == '__main__':
