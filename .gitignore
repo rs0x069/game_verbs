@@ -7,7 +7,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # My
-*.json
+game-verbs-351817-f446e0fad23a.json
 
 # User-specific stuff
 .idea/**/workspace.xml
