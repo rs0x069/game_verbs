@@ -37,6 +37,9 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
             )
         )
 
+        if response.query_result.intent.is_fallback:
+            return None
+
         fulfillment_text = response.query_result.fulfillment_text
 
         print("Fulfillment text: {}\n".format(fulfillment_text))
@@ -61,11 +64,12 @@ def answer_text(event, vk_api, session_id):
         session_id=session_id, texts=intent_text,
         language_code='ru-RU'
     )
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=fulfillment_text,
-        random_id=random.randint(1, 1000)
-    )
+    if fulfillment_text:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=fulfillment_text,
+            random_id=random.randint(1, 1000)
+        )
 
 
 def main():
