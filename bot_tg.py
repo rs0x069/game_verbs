@@ -54,7 +54,7 @@ def echo_message(update, context):
 
 
 def answer_text(update, context):
-    dialogflow_project_id = 'game-verbs-351817'
+    dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [update.message.text]
     fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id='197598472', texts=intent_text,
                                            language_code='ru-RU')

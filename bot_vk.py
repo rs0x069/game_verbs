@@ -56,7 +56,7 @@ def echo_message(event, vk_api):
 
 
 def answer_text(event, vk_api, session_id):
-    dialogflow_project_id = 'game-verbs-351817'
+    dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [event.text]
 
     fulfillment_text = detect_intent_texts(

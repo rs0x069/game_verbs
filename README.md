@@ -33,6 +33,7 @@ pip install -r requirements.txt
   + TELEGRAM_TOKEN - токен телеграм бота.
   + VK_TOKEN - ключ API из VK.
   + GOOGLE_APPLICATION_CREDENTIALS - имя файла с регистрационными данными из Google Cloud Platform. Этот файл должен лежать в папке проекта.
+  + GOOGLE_DIALOGFLOW_PROJECT_ID - код проекта в Google Cloud Platform
 
 ## Использование
 * Для запуска телеграм бота запустить скрипт `bot_tg.py`
