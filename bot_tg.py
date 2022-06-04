@@ -1,7 +1,28 @@
+import logging
 import os
+import telegram
 
 from dotenv import load_dotenv
+from google.api_core.exceptions import PermissionDenied
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
+logger = logging.getLogger("bots_logger")
+
+
+class TelegramLogsHandler(logging.Handler):
+    def __init__(self, token: str, chat_id: int):
+        super().__init__()
+        self.token = token
+        self.chat_id = chat_id
+
+        self.bot = telegram.Bot(token=self.token)
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        try:
+            self.bot.send_message(self.chat_id, log_entry)
+        except telegram.error.TelegramError as err:
+            logging.exception(err)
 
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
@@ -56,15 +77,24 @@ def echo_message(update, context):
 def answer_text(update, context):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [update.message.text]
-    fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id='197598472', texts=intent_text,
-                                           language_code='ru-RU')
-    update.message.reply_text(fulfillment_text)
+    try:
+        fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id='197598472',
+                                               texts=intent_text, language_code='ru-RU')
+    except PermissionDenied as err:
+        logger.exception(err)
+    else:
+        update.message.reply_text(fulfillment_text)
 
 
 def main():
     load_dotenv()
 
     telegram_token = os.getenv("TELEGRAM_TOKEN")
+    telegram_recipient_chat_id = os.getenv("TELEGRAM_RECIPIENT_CHAT_ID")
+
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramLogsHandler(telegram_token, int(telegram_recipient_chat_id)))
+    logger.info('Bot is started')
 
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
