@@ -50,5 +50,13 @@ python bot_vk.py
 python manage_intents.py
 ```
 
+## Примеры
+#### Пример результата для Telegram:
+![Пример результата для Telegram](https://raw.githubusercontent.com/rs0x069/game_verbs/main/.github/images/demo_tg_bot.gif)
+
+#### Пример результата для ВКонтакте:
+![Пример результата для ВКонтакте](https://raw.githubusercontent.com/rs0x069/game_verbs/main/.github/images/demo_vk_bot.gif)
+
+
 ***
 Учебный проект для курсов web-разработчиков [dvmn](https://dvmn.org). 
