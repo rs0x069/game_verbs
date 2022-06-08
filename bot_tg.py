@@ -97,7 +97,7 @@ def main():
 
     logger.setLevel(logging.INFO)
     logger.addHandler(TelegramLogsHandler(telegram_token, int(telegram_recipient_chat_id)))
-    logger.info('Bot is started')
+    logger.info('Bot TG is started')
 
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher

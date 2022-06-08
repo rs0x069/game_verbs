@@ -109,7 +109,7 @@ def main():
 
     logger.setLevel(logging.INFO)
     logger.addHandler(TelegramLogsHandler(telegram_token, int(telegram_recipient_chat_id)))
-    logger.info('Bot is started')
+    logger.info('Bot VK is started')
 
     vk_token = os.getenv("VK_TOKEN")
     vk_session = vk.VkApi(token=vk_token)
