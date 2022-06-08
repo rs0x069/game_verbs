@@ -1,10 +1,32 @@
+import logging
 import os
 import random
+import telegram
 
 import vk_api as vk
 
 from dotenv import load_dotenv
+from google.api_core.exceptions import GoogleAPIError
 from vk_api.longpoll import VkLongPoll, VkEventType
+from vk_api.exceptions import VkApiError
+
+logger = logging.getLogger("vk_bot_logger")
+
+
+class TelegramLogsHandler(logging.Handler):
+    def __init__(self, token: str, chat_id: int):
+        super().__init__()
+        self.token = token
+        self.chat_id = chat_id
+
+        self.bot = telegram.Bot(token=self.token)
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        try:
+            self.bot.send_message(self.chat_id, log_entry)
+        except telegram.error.TelegramError as err:
+            logging.exception(err)
 
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
@@ -59,21 +81,35 @@ def answer_text(event, vk_api, session_id):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [event.text]
 
-    fulfillment_text = detect_intent_texts(
-        project_id=dialogflow_project_id,
-        session_id=session_id, texts=intent_text,
-        language_code='ru-RU'
-    )
-    if fulfillment_text:
-        vk_api.messages.send(
-            user_id=event.user_id,
-            message=fulfillment_text,
-            random_id=random.randint(1, 1000)
+    try:
+        fulfillment_text = detect_intent_texts(
+            project_id=dialogflow_project_id,
+            session_id=session_id, texts=intent_text,
+            language_code='ru-RU'
         )
+    except GoogleAPIError as err:
+        logger.exception(f'GoogleAPIError: {err}')
+    else:
+        if fulfillment_text:
+            try:
+                vk_api.messages.send(
+                    user_id=event.user_id,
+                    message=fulfillment_text,
+                    random_id=random.randint(1, 1000)
+                )
+            except VkApiError as err:
+                logger.exception(f'VkApiError: {err}')
 
 
 def main():
     load_dotenv()
+
+    telegram_token = os.getenv("TELEGRAM_TOKEN")
+    telegram_recipient_chat_id = os.getenv("TELEGRAM_RECIPIENT_CHAT_ID")
+
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramLogsHandler(telegram_token, int(telegram_recipient_chat_id)))
+    logger.info('Bot is started')
 
     vk_token = os.getenv("VK_TOKEN")
     vk_session = vk.VkApi(token=vk_token)
