@@ -3,10 +3,10 @@ import os
 import telegram
 
 from dotenv import load_dotenv
-from google.api_core.exceptions import PermissionDenied
+from google.api_core.exceptions import GoogleAPIError
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-logger = logging.getLogger("bots_logger")
+logger = logging.getLogger("tg_bot_logger")
 
 
 class TelegramLogsHandler(logging.Handler):
@@ -80,10 +80,13 @@ def answer_text(update, context):
     try:
         fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id='197598472',
                                                texts=intent_text, language_code='ru-RU')
-    except PermissionDenied as err:
-        logger.exception(err)
+    except GoogleAPIError as err:
+        logger.exception(f'GoogleAPIError: {err}')
     else:
-        update.message.reply_text(fulfillment_text)
+        try:
+            update.message.reply_text(fulfillment_text)
+        except telegram.error.TelegramError as err:
+            logger.exception(f'TelegramError: {err}')
 
 
 def main():
