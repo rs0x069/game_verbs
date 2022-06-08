@@ -31,6 +31,7 @@ pip install -r requirements.txt
 ```
 * Создать файл `.env` со следующими переменными окружения:
   + TELEGRAM_TOKEN - токен телеграм бота.
+  + TELEGRAM_RECIPIENT_CHAT_ID - id чата в Телеграм, в который бот будет отправлять ошибки. 
   + VK_TOKEN - ключ API из VK.
   + GOOGLE_APPLICATION_CREDENTIALS - имя файла с регистрационными данными из Google Cloud Platform. Этот файл должен лежать в папке проекта.
   + GOOGLE_DIALOGFLOW_PROJECT_ID - код проекта в Google Cloud Platform
