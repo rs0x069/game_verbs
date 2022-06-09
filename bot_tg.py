@@ -4,7 +4,7 @@ import telegram
 
 from dotenv import load_dotenv
 from google.api_core.exceptions import GoogleAPIError
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, MessageHandler, Filters
 
 from google_dialogflow_api import detect_intent_texts
 from telegram_logger import TelegramLogsHandler
@@ -14,9 +14,11 @@ logger = logging.getLogger("tg_bot_logger")
 
 def answer_text(update, context):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
+    session_id = update.message.from_user.id
     intent_text = [update.message.text]
+
     try:
-        fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id='197598472',
+        fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id=session_id,
                                                texts=intent_text, language_code='ru-RU', is_mute_if_fallback=False)
     except GoogleAPIError as err:
         logger.exception(f'GoogleAPIError: {err}')

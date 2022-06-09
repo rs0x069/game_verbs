@@ -22,7 +22,8 @@ def answer_text(event, vk_api, session_id):
     try:
         fulfillment_text = detect_intent_texts(
             project_id=dialogflow_project_id,
-            session_id=session_id, texts=intent_text,
+            session_id=session_id,
+            texts=intent_text,
             language_code='ru-RU',
             is_mute_if_fallback=True
         )
@@ -57,7 +58,8 @@ def main():
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            answer_text(event, vk_api, event.user_id)
+            session_id = 'vk-' + str(event.user_id)
+            answer_text(event, vk_api, session_id)
 
 
 if __name__ == '__main__':
