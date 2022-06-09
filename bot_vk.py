@@ -15,14 +15,6 @@ from telegram_logger import TelegramLogsHandler
 logger = logging.getLogger("vk_bot_logger")
 
 
-def echo_message(event, vk_api):
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=event.text,
-        random_id=random.randint(1, 1000)
-    )
-
-
 def answer_text(event, vk_api, session_id):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [event.text]

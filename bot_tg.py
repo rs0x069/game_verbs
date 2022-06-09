@@ -12,18 +12,6 @@ from telegram_logger import TelegramLogsHandler
 logger = logging.getLogger("tg_bot_logger")
 
 
-def start_command(update, context):
-    update.message.reply_text('Здравствуйте!')
-
-
-def help_command(update, context):
-    update.message.reply_text('Help!')
-
-
-def echo_message(update, context):
-    update.message.reply_text(update.message.text)
-
-
 def answer_text(update, context):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [update.message.text]
