@@ -1,7 +1,6 @@
 import logging
 import os
 import random
-import telegram
 
 import vk_api as vk
 
@@ -10,23 +9,9 @@ from google.api_core.exceptions import GoogleAPIError
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.exceptions import VkApiError
 
+from telegram_logger import TelegramLogsHandler
+
 logger = logging.getLogger("vk_bot_logger")
-
-
-class TelegramLogsHandler(logging.Handler):
-    def __init__(self, token: str, chat_id: int):
-        super().__init__()
-        self.token = token
-        self.chat_id = chat_id
-
-        self.bot = telegram.Bot(token=self.token)
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        try:
-            self.bot.send_message(self.chat_id, log_entry)
-        except telegram.error.TelegramError as err:
-            logging.exception(err)
 
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
