@@ -9,49 +9,10 @@ from google.api_core.exceptions import GoogleAPIError
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.exceptions import VkApiError
 
+from google_dialogflow_api import detect_intent_texts
 from telegram_logger import TelegramLogsHandler
 
 logger = logging.getLogger("vk_bot_logger")
-
-
-def detect_intent_texts(project_id, session_id, texts, language_code):
-    """Returns the result of detect intent with texts as inputs.
-
-    Using the same `session_id` between requests allows continuation
-    of the conversation."""
-    from google.cloud import dialogflow
-
-    session_client = dialogflow.SessionsClient()
-
-    session = session_client.session_path(project_id, session_id)
-    print("Session path: {}\n".format(session))
-
-    for text in texts:
-        text_input = dialogflow.TextInput(text=text, language_code=language_code)
-
-        query_input = dialogflow.QueryInput(text=text_input)
-
-        response = session_client.detect_intent(
-            request={"session": session, "query_input": query_input}
-        )
-
-        print("=" * 20)
-        print("Query text: {}".format(response.query_result.query_text))
-        print(
-            "Detected intent: {} (confidence: {})\n".format(
-                response.query_result.intent.display_name,
-                response.query_result.intent_detection_confidence,
-            )
-        )
-
-        if response.query_result.intent.is_fallback:
-            return None
-
-        fulfillment_text = response.query_result.fulfillment_text
-
-        print("Fulfillment text: {}\n".format(fulfillment_text))
-
-        return fulfillment_text
 
 
 def echo_message(event, vk_api):
@@ -70,7 +31,8 @@ def answer_text(event, vk_api, session_id):
         fulfillment_text = detect_intent_texts(
             project_id=dialogflow_project_id,
             session_id=session_id, texts=intent_text,
-            language_code='ru-RU'
+            language_code='ru-RU',
+            is_mute_if_fallback=True
         )
     except GoogleAPIError as err:
         logger.exception(f'GoogleAPIError: {err}')
