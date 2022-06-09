@@ -1,6 +1,8 @@
+import os
 import json
 
 from dotenv import load_dotenv
+from google.api_core.exceptions import GoogleAPIError
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
@@ -37,13 +39,15 @@ def main():
     with open('questions.json') as questions_file:
         intents = json.load(questions_file)
 
-    dialogflow_project_id = 'game-verbs-351817'
-    intent_name = list(intents.keys())[1]
-    intent_questions = intents[intent_name]['questions']
-    intent_answer = [intents[intent_name]['answer']]
+    dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
 
-    intent = create_intent(dialogflow_project_id, intent_name, intent_questions, intent_answer)
-    print(intent)
+    for intent in intents:
+        intent_questions = intents[intent]['questions']
+        intent_answer = [intents[intent]['answer']]
+        try:
+            create_intent(dialogflow_project_id, intent, intent_questions, intent_answer)
+        except GoogleAPIError as err:
+            print(f'GoogleAPIError: {err}')
 
 
 if __name__ == '__main__':
