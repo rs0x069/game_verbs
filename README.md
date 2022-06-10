@@ -45,7 +45,7 @@ python bot_tg.py
 ```commandline
 python bot_vk.py
 ```
-* Для обучения агента в DialoFlow фразами и ответами из файла `questions.json` запустить скрипт `manage_intents.py` 
+* Для обучения агента в DialogFlow фразами и ответами из файла `questions.json` запустить скрипт `manage_intents.py` 
 ```commandline
 python manage_intents.py
 ```
