@@ -1,9 +1,12 @@
 import argparse
+import logging
 import os
 import json
 
 from dotenv import load_dotenv
 from google.api_core.exceptions import GoogleAPIError
+
+logger = logging.getLogger("Manage intents logger")
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
@@ -37,6 +40,12 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
 def main():
     load_dotenv()
 
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s :: %(levelname)s :: %(message)s', '%Y-%m-%d %H:%M:%S')
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
 
     parser = argparse.ArgumentParser(description='Скрипт обучения нейронной сети фразами и ответами из json-файла')
@@ -50,15 +59,16 @@ def main():
         with open(args.file_name) as questions_file:
             intents = json.load(questions_file)
     except FileNotFoundError as err:
-        print(f'FileNotFoundError: {err}')
+        logger.error(f'FileNotFoundError: {err}')
 
+    # TODO: Сделать проверку формата json-файла, файл должен соответствовать шаблону
     for intent in intents:
         intent_questions = intents[intent]['questions']
         intent_answer = [intents[intent]['answer']]
         try:
             create_intent(dialogflow_project_id, intent, intent_questions, intent_answer)
         except GoogleAPIError as err:
-            print(f'GoogleAPIError: {err}')
+            logger.error(f'GoogleAPIError: {err}')
 
 
 if __name__ == '__main__':
