@@ -1,3 +1,4 @@
+import argparse
 import os
 import json
 
@@ -36,10 +37,20 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
 def main():
     load_dotenv()
 
-    with open('questions.json') as questions_file:
-        intents = json.load(questions_file)
-
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
+
+    parser = argparse.ArgumentParser(description='Скрипт обучения нейронной сети фразами и ответами из json-файла')
+    parser.add_argument('-f', '--file_name', default='questions.json',
+                        help='Имя json-файла с фразами и ответами. По-умолчанию questions.json в папке скрипта.'
+                        )
+    args = parser.parse_args()
+
+    intents = {}
+    try:
+        with open(args.file_name) as questions_file:
+            intents = json.load(questions_file)
+    except FileNotFoundError as err:
+        print(f'FileNotFoundError: {err}')
 
     for intent in intents:
         intent_questions = intents[intent]['questions']
