@@ -5,13 +5,13 @@ import json
 
 from dotenv import load_dotenv
 from google.api_core.exceptions import GoogleAPIError
+from google.cloud import dialogflow
 
 logger = logging.getLogger("Manage intents logger")
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
     """Create an intent of the given intent type."""
-    from google.cloud import dialogflow
 
     intents_client = dialogflow.IntentsClient()
 
@@ -62,11 +62,11 @@ def main():
         logger.error(f'FileNotFoundError: {err}')
 
     # TODO: Сделать проверку формата json-файла, файл должен соответствовать шаблону
-    for intent in intents:
-        intent_questions = intents[intent]['questions']
-        intent_answer = [intents[intent]['answer']]
+    for intent_name, intent_content in intents.items():
+        intent_questions = intent_content['questions']
+        intent_answer = intent_content['answer']
         try:
-            create_intent(dialogflow_project_id, intent, intent_questions, intent_answer)
+            create_intent(dialogflow_project_id, intent_name, intent_questions, intent_answer)
         except GoogleAPIError as err:
             logger.error(f'GoogleAPIError: {err}')
 
