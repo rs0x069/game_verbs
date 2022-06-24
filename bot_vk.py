@@ -20,17 +20,17 @@ def answer_text(event, vk_api, session_id):
     intent_text = [event.text]
 
     try:
-        fulfillment_text = detect_intent_texts(
+        is_fallback, fulfillment_text = detect_intent_texts(
             project_id=dialogflow_project_id,
             session_id=session_id,
             texts=intent_text,
-            language_code='ru-RU',
-            is_mute_if_fallback=True
+            language_code='ru-RU'
         )
     except GoogleAPIError as err:
         logger.exception(f'GoogleAPIError: {err}')
     else:
-        if fulfillment_text:
+        print('is_fallback =', is_fallback)
+        if not is_fallback:
             try:
                 vk_api.messages.send(
                     user_id=event.user_id,

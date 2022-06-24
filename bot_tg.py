@@ -18,8 +18,8 @@ def answer_text(update, context):
     intent_text = [update.message.text]
 
     try:
-        fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id=session_id,
-                                               texts=intent_text, language_code='ru-RU', is_mute_if_fallback=False)
+        is_fallback, fulfillment_text = detect_intent_texts(project_id=dialogflow_project_id, session_id=session_id,
+                                                            texts=intent_text, language_code='ru-RU')
     except GoogleAPIError as err:
         logger.exception(f'GoogleAPIError: {err}')
     else:
