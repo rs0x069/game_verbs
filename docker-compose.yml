@@ -2,9 +2,13 @@ version: '3.9'
 
 services:
   bot_telegram:
-    image: rs0x069/game-verbs-bot:1.0
+    build: .
     command: telegram
     env_file:
       - ./.env
-#    volumes:
-#      - ./game-verbs-351817-f446e0fad23a.json:/app/game-verbs-351817-f446e0fad23a.json
+
+  bot_vk:
+    build: .
+    command: vk
+    env_file:
+      - ./.env
