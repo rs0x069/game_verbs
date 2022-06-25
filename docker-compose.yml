@@ -6,5 +6,5 @@ services:
     command: telegram
     env_file:
       - ./.env
-    volumes:
-      - ./game-verbs-351817-f446e0fad23a.json:/app/game-verbs-351817-f446e0fad23a.json
+#    volumes:
+#      - ./game-verbs-351817-f446e0fad23a.json:/app/game-verbs-351817-f446e0fad23a.json
