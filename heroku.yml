@@ -1,0 +1,8 @@
+build:
+  docker:
+    bot: Dockerfile
+
+run:
+  bot-tg: telegram
+  bot-vk: vk
+  manage: manage-intents
