@@ -68,6 +68,31 @@ python manage_intents.py -f /path/filename.json
 }
 ```
 
+## Запуск в Докер
+* На компьютере должен быть установлен докер
+* Подготовить файл с переменными окружения `.env` (описание переменных см. в разделе Установка)
+* Положить файл с регистрационными данными из Google Cloud Platform (GOOGLE_APPLICATION_CREDENTIALS) в папку с проектом и укажите имя файла в `.env`. Или же можно прокинуть этот файл как `volume` в докер-контейнер
+* Находясь в папке с проектом выполнить команду `docker compose up -d`. Запустится бот telegram и vk
+* Если в качестве `command` указать `telegram`, то запустится бот telegram, если указать vk, то запустится бот vk (см. пример файла docker-compose.yml) 
+
+### Пример файла docker-compose.yml
+```yaml
+version: '3.9'
+
+services:
+  bot_telegram:
+    build: .
+    command: telegram
+    env_file:
+      - ./.env
+
+  bot_vk:
+    build: .
+    command: vk
+    env_file:
+      - ./.env
+```
+
 ## Примеры
 #### Пример результата для Telegram:
 ![Пример результата для Telegram](https://raw.githubusercontent.com/rs0x069/game_verbs/main/.github/images/demo_tg_bot.gif)
