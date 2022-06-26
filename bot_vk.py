@@ -19,26 +19,18 @@ def answer_text(event, vk_api, session_id):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
     intent_text = [event.text]
 
-    try:
-        is_fallback, fulfillment_text = detect_intent_texts(
-            project_id=dialogflow_project_id,
-            session_id=session_id,
-            texts=intent_text,
-            language_code='ru-RU'
+    is_fallback, fulfillment_text = detect_intent_texts(
+        project_id=dialogflow_project_id,
+        session_id=session_id,
+        texts=intent_text,
+        language_code='ru-RU'
+    )
+    if not is_fallback:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=fulfillment_text,
+            random_id=random.randint(1, 1000)
         )
-    except GoogleAPIError as err:
-        logger.exception(f'GoogleAPIError: {err}')
-    else:
-        print('is_fallback =', is_fallback)
-        if not is_fallback:
-            try:
-                vk_api.messages.send(
-                    user_id=event.user_id,
-                    message=fulfillment_text,
-                    random_id=random.randint(1, 1000)
-                )
-            except VkApiError as err:
-                logger.exception(f'VkApiError: {err}')
 
 
 def main():
@@ -59,7 +51,12 @@ def main():
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             session_id = 'vk-' + str(event.user_id)
-            answer_text(event, vk_api, session_id)
+            try:
+                answer_text(event, vk_api, session_id)
+            except GoogleAPIError as err:
+                logger.exception(f'GoogleAPIError: {err}')
+            except VkApiError as err:
+                logger.exception(f'VkApiError: {err}')
 
 
 if __name__ == '__main__':
