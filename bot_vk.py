@@ -9,7 +9,7 @@ from google.api_core.exceptions import GoogleAPIError
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.exceptions import VkApiError
 
-from google_dialogflow_api import detect_intent_texts
+from google_dialogflow_api import detect_intent_text
 from telegram_logger import TelegramLogsHandler
 
 logger = logging.getLogger("vk_bot_logger")
@@ -17,12 +17,12 @@ logger = logging.getLogger("vk_bot_logger")
 
 def answer_text(event, vk_api, session_id):
     dialogflow_project_id = os.getenv("GOOGLE_DIALOGFLOW_PROJECT_ID")
-    intent_text = [event.text]
+    intent_text = event.text
 
-    is_fallback, fulfillment_text = detect_intent_texts(
+    is_fallback, fulfillment_text = detect_intent_text(
         project_id=dialogflow_project_id,
         session_id=session_id,
-        texts=intent_text,
+        text=intent_text,
         language_code='ru-RU'
     )
     if not is_fallback:
