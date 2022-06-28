@@ -1,9 +1,7 @@
 import logging
 import os
-import telegram
 
 from dotenv import load_dotenv
-from google.api_core.exceptions import GoogleAPIError
 from telegram.ext import Updater, MessageHandler, Filters
 
 from google_dialogflow_api import detect_intent_text
@@ -17,16 +15,13 @@ def answer_text(update, context):
     session_id = update.message.from_user.id
     intent_text = update.message.text
 
-    try:
-        is_fallback, fulfillment_text = detect_intent_text(project_id=dialogflow_project_id, session_id=session_id,
-                                                           text=intent_text, language_code='ru-RU')
-    except GoogleAPIError as err:
-        logger.exception(f'GoogleAPIError: {err}')
-    else:
-        try:
-            update.message.reply_text(fulfillment_text)
-        except telegram.error.TelegramError as err:
-            logger.exception(f'TelegramError: {err}')
+    is_fallback, fulfillment_text = detect_intent_text(project_id=dialogflow_project_id, session_id=session_id,
+                                                       text=intent_text, language_code='ru-RU')
+    update.message.reply_text(fulfillment_text)
+
+
+def error_handler(update, context):
+    logger.exception(context.error)
 
 
 def main():
@@ -42,6 +37,7 @@ def main():
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, answer_text))
+    dispatcher.add_error_handler(error_handler)
 
     updater.start_polling()
     updater.idle()
