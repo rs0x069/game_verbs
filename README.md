@@ -78,7 +78,7 @@ docker compose up -d
 ``` 
 * Если в `command` указать `telegram`, то запустится бот telegram, если указать `vk`, то запустится бот vk (см. [пример](#пример-файла-docker-composeyml) файла docker-compose.yml) 
 
-### Пример файла docker-compose.yml
+#### Пример файла docker-compose.yml
 ```yaml
 version: '3.9'
 
